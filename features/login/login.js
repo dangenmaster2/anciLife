@@ -1,5 +1,4 @@
 import { Button, Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { ThemedInput } from '../layout/layout';
 import { useState } from 'react';
 import { setUserEmail } from './login.slice';
 

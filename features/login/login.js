@@ -1,7 +1,22 @@
 import { Button, Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { useState } from 'react';
+import { ThemedInput } from '../layout/layout';
+import { useEffect, useState } from 'react';
 import { setUserEmail } from './login.slice';
 
+import { initializeApp } from 'firebase/app';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'firebase/auth';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAyGmyNIwOxPWKmUNnqv8BqmacrBvXK_So",
+  authDomain: "ancilife-151f6.firebaseapp.com",
+  databaseURL: "https://ancilife-151f6-default-rtdb.firebaseio.com",
+  projectId: "ancilife-151f6",
+  storageBucket: "ancilife-151f6.appspot.com",
+  messagingSenderId: "745131209241",
+  appId: "1:745131209241:web:af37fb8f9f9759b5243088"
+};
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
 const Logo = () => {
     return(
@@ -12,12 +27,36 @@ const Logo = () => {
     )
 }
 
+
 const Login = () => {
     const inputField = ['Email Address', 'Password', 'Confirm Password'];
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [passwordMatch, setPasswordMatch] = useState(true);
+    const [isLogin, setIsLogin] = useState(true);
+    const [user, setUser] = useState(null);
+    const auth = getAuth(app);
+    useEffect(() => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        setUser(user);
+      });
+  
+      return () => unsubscribe();
+    }, [auth]);
+
+    const handleAuthentication = async () => {
+      try {
+         
+            // Sign up
+            await createUserWithEmailAndPassword(auth, email, password);
+            console.log('User created successfully!');
+          
+        
+      } catch (error) {
+        console.error('Authentication error:', error.message);
+      }
+    };
 
     const emailInputHandler = (email) => {
       console.log(email)
@@ -33,18 +72,22 @@ const Login = () => {
     }
 
     const setUserData = () => {
+      console.log(password)
       if (password !== confirmPassword) setPasswordMatch(false);
       else setPasswordMatch(true);
       setUserEmail(email);
       setPassword(password);
     }
     return (
-      <View style={styles.loginContainer}>
+      <View>
+        {
+          user ? <View><Text>Logged in</Text></View> :
+          <View style={styles.loginContainer}>
         <Logo />
         <Text style={styles.signUp}>Sign Up</Text>
         <View style={styles.inputContainer}>
           <TextInput style={styles.textInput} onChangeText={emailInputHandler} placeholder='Enter your email'/>
-          <TextInput style={styles.textInput} onChangeText={passwordHandler} placeholder='Password'/>
+          <TextInput secureTextEntry={true} style={styles.textInput} onChangeText={passwordHandler} placeholder='Password'/>
           <TextInput style={styles.textInput} onChangeText={confirmPasswordHandler} placeholder='Confirm Password'/>
         </View>
         {
@@ -53,17 +96,21 @@ const Login = () => {
           <Text>Password doesn't match</Text>
         </View> : <></>
         }
-        <Pressable style={styles.signUpButton}>
-          <View onPress={setUserData} >
+        {/* <Button title='test' onPress={setUserData}/> */}
+        <Pressable style={styles.signUpButton} onPress={handleAuthentication}>
+          <View>
             <Text>Sign Up</Text>
           </View>
         </Pressable>
         <Pressable style={styles.signUpButton}>
-          <View onPress={setUserData} >
+          <View>
             <Text>Log In</Text>
           </View>
         </Pressable>
       </View>
+        }
+      </View>
+      
     );
   }
 

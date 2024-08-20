@@ -1,9 +1,11 @@
 import { StyleSheet, TextInput, View } from "react-native";
 import Login from "../login/login";
+import { StatusBar } from 'expo-status-bar';
 
 const Layout = ({ children }) => {
     return (
         <View style = {styles.appContainer}>
+            <StatusBar style='dark' />
             <Login />
         </View>
     )

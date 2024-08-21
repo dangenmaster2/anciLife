@@ -1,5 +1,5 @@
 import { signInWithEmailAndPassword } from 'firebase/auth';
-// import { auth } from '../../firebase/firebase';
+import { auth } from '../../firebase/firebase';
 
 import { useState } from 'react';
 
@@ -10,7 +10,11 @@ const useUserLogin = () => {
       console.log(email);
       console.log(password);
       setIsLoading(true);
-      const userLogged = await signInWithEmailAndPassword(email, password);
+      const userLogged = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       console.group(userLogged);
     } catch (error) {
       console.error('Login error:', error.message);

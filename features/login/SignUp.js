@@ -2,24 +2,18 @@ import { View, TextInput, Pressable, Text, StyleSheet } from 'react-native';
 
 import useSignUpwithEmailAndPassword from '../hooks/useSignUpwithEmailAndPassword';
 import { useState } from 'react';
-import { setGlobalPassword, setUserEmail } from './login.slice';
-import { useDispatch } from 'react-redux';
-
 const SignUp = () => {
   const { isLoading, signUp } = useSignUpwithEmailAndPassword();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const dispatch = useDispatch();
 
   const handleEmail = (text) => {
     console.log('email ', text)
     setEmail(text);
-    dispatch(setUserEmail(text))
   }
   const handlePassword = (text) => {
     console.log('password ', text)
     setPassword(text);
-    dispatch(setGlobalPassword(text))
   }
 
   return (

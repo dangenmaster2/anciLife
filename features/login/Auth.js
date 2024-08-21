@@ -16,7 +16,7 @@ const Auth = () => {
   return (
     <View>
       <Logo />
-      {isLogin ? <UserLogin /> : <SignUp />}
+      {!isLogin ? <UserLogin /> : <SignUp />}
       <View>
         <Text>
           {isLogin ? "Don't have an account?" : 'Already have an account?'}
@@ -29,6 +29,8 @@ const Auth = () => {
   );
 };
 
-const style = StyleSheet.create({});
+const style = StyleSheet.create({
+  
+});
 
 export default Auth;

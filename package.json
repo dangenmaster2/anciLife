@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-native-firebase/app": "^20.4.0",
     "@react-navigation/native": "^6.1.18",
     "@reduxjs/toolkit": "^2.2.7",
     "expo": "~51.0.26",

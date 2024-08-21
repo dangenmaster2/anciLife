@@ -10,20 +10,23 @@ const UserLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   return (
-    <View>
+    <View style={styles.signUpContainer}>
       <TextInput
+        style={styles.inputContainer}
         onChangeText={(text) => {
           setEmail(text);
         }}
         placeholder='Enter your email'
       />
       <TextInput
+        style={styles.inputContainer}
         onChangeText={(text) => {
           setPassword(text);
         }}
         placeholder='Enter your password'
       />
       <Pressable
+        style={styles.signUpButton}
         onPress={() => {
           userLoginFunc(email, password);
         }}

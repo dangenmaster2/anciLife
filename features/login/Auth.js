@@ -5,30 +5,23 @@ import { useState } from 'react';
 import Logo from '../../components/Logo';
 import SignUp from './SignUp';
 import UserLogin from './UserLogin';
+import { selectLoggedInState, selectUserEmail } from './login.slice';
+import { useSelector } from 'react-redux';
 
-const Auth = () => {
-  const [isLogin, setIsLogin] = useState(false);
-
-  const toggleIsLogin = () => {
-    setIsLogin(!isLogin);
-  };
-
+const Auth = ({navigation}) => {
+  const loggedInState = useSelector(selectLoggedInState) || false;
   return (
-    <View>
+    <View style={style.authContainer}>
       <Logo />
-      {!isLogin ? <UserLogin /> : <SignUp />}
-      <View>
-        <Text>
-          {isLogin ? "Don't have an account?" : 'Already have an account?'}
-        </Text>
-      </View>
-      <View>
-        <Button onPress={toggleIsLogin} title={isLogin ? 'Sign up' : 'Login'} />
-      </View>
+      {loggedInState ? <UserLogin navigation={navigation}/> : <SignUp navigation={navigation}/>} 
     </View>
   );
 };
 
-const style = StyleSheet.create({});
+const style = StyleSheet.create({
+  authContainer: {
+    width: '100%'
+  },
+});
 
 export default Auth;

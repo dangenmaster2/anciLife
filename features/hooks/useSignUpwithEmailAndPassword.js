@@ -12,7 +12,6 @@ const useSignUpwithEmailAndPassword = () => {
     try {
       setIsLogin(true);
       await createUserWithEmailAndPassword(auth, email, password);
-      console.log('sign up successfull');
       dispatch(setUserAuthenticated(true));
     } catch (error) {
       console.error('Authentication error:', error.message);

@@ -1,27 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-export const selectUserEmail = (state) => state.login.userEmail;
-export const selectUserPassword = (state) => state.login.password;
+export const selectLoggedInState = state => state.login.loggedIn;
+export const selectUserAuthenticated = state => state.login.userAuthenticated;
 
 const loginSlice = createSlice({
     name: 'login',
     initialState: {
-        userEmail: '',
-        password: '',
-        confirmPassword: ''
+        loggedIn: false,
+        userAuthenticated: false
     },
     reducers: {
-        setUserEmail: (state, action) => {
-            state.username = action.payload;
+        setLoggedIn: (state, action) => {
+            state.loggedIn = action.payload;
         },
-        setGlobalPassword: (state, action) => {
-            state.password = action.payload;
-        },
-        setConfirmPassword: (state, action) => {
-            state.confirmPassword = action.payload;
+        setUserAuthenticated: (state, action) => {
+            state.userAuthenticated = action.payload;
         }
     }
 })
 
-export const { setUserEmail, setGlobalPassword, setConfirmPassword } = loginSlice.actions;
+export const { setLoggedIn, setUserAuthenticated } = loginSlice.actions;
 export default loginSlice.reducer;

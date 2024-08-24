@@ -1,59 +1,87 @@
 import { View, TextInput, Pressable, Text, StyleSheet } from 'react-native';
+// import { useNavigation } from '@react-navigation/native';
 
 import useUserLogin from '../hooks/useUserLogin';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUserAuthenticated, setLoggedIn, setUserAuthenticated } from './login.slice';
+import useLogout from '../hooks/useLogout';
+import PrimaryButton from '../../components/PrimaryButton';
+import InputField from '../../components/InputField';
 
-const UserLogin = () => {
+const UserLogin = ({navigation}) => {
   const { isLoading, userLoginFunc } = useUserLogin();
-
+  const { userLogoutFnc } = useLogout();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
+  console.log(' navigation in userLogin', typeof navigation);
+  const authenticationState = useSelector(selectUserAuthenticated);
+  const handleLoggedInState = () => {
+    console.log('calling handle logged in');
+    dispatch(setLoggedIn(false))
+  }
+  useEffect(() => {
+    if (authenticationState) {
+      navigation.navigation.navigate("home");
+    }
+  }, [authenticationState])
   return (
     <View style={styles.signUpContainer}>
-      <TextInput
-        style={styles.inputContainer}
-        onChangeText={(text) => {
-          setEmail(text);
-        }}
-        placeholder='Enter your email'
-      />
-      <TextInput
-        style={styles.inputContainer}
-        onChangeText={(text) => {
-          setPassword(text);
-        }}
-        placeholder='Enter your password'
-      />
-      <Pressable
-        style={styles.signUpButton}
-        onPress={() => {
-          userLoginFunc(email, password);
-        }}
-      >
-        <Text>Log in</Text>
-      </Pressable>
+      <View style={styles.logInTextContainer}>
+        <Text style={styles.logInText}>Login To Your Account</Text>
+      </View>
+      <InputField onChangeText={(text) => {setEmail(text)}} placeHolderText='Enter your Email' />
+      <InputField onChangeText={(text) => {setPassword(text)}} placeHolderText='Enter password' secureTextEntry={true}/>
+      <PrimaryButton onPress={() => {userLoginFunc(email, password)}} buttonText="LOGIN"/>
+      <View style={styles.alreadyHaveAccountContainer}>
+        <Text>Don't have an account?</Text>
+        <Pressable>
+          <Text style={styles.loginHere} onPress={handleLoggedInState}> Sign Up here</Text>
+        </Pressable>
+        </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  signUpContainer: {
-    flex: 1,
+  logInTextContainer: {
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#99d8dd',
+    height: 50,
+    width: 425,
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
+    marginBottom: 20
+  },
+  logInText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  signUpContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 100
   },
   inputContainer: {
     height: 60,
-    width: '80%',
-    backgroundColor: 'yellow',
-    marginBottom: 5,
+    width: '100%',
+    borderWidth: 1.2,
+    borderRadius: 5,
+    borderColor: '#3eb783',
+    backgroundColor: 'white',
+    marginBottom: 15,
+    paddingLeft: 18
   },
-  signUpButton: {
-    height: 60,
-    width: '40%',
-    backgroundColor: 'red',
+  alreadyHaveAccountContainer: {
+    flexDirection: 'row',
+    marginTop: 20
   },
+  loginHere: {
+    color: '##31b258'
+  }
 });
 
 export default UserLogin;

@@ -1,14 +1,24 @@
-import { Image } from 'react-native';
+import { Image, StyleSheet, View } from 'react-native';
 
 const Logo = () => {
   return (
-    <Image
-      style={{
-        width: 280,
-        height: 280,
-      }}
+    <View style={styles.logoContainer}>
+      <Image
+      style={styles.imageContainer}
       source={require('../assets/logo/Ancilife-logo.png')}
     />
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  logoContainer: {
+    alignItems: 'center',
+  },
+  imageContainer: {
+    height: 200,
+    width: 200
+  }
+})
+
 export default Logo;

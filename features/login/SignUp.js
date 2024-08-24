@@ -17,16 +17,13 @@ const SignUp = () => {
   const [password, setPassword] = useState('');
 
   const handleEmail = (text) => {
-    console.log('email ', text);
     setEmail(text);
   };
   const handlePassword = (text) => {
-    console.log('password ', text);
     setPassword(text);
   };
 
   const handleLoggedInState = () => {
-    console.log('calling handle logged in');
     dispatch(setLoggedIn(true))
   }
 

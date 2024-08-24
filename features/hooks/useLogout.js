@@ -8,7 +8,6 @@ const useLogout = () => {
   const userLogoutFnc = async () => {
     try {
       await signOut(auth);
-      console.log('user signout');
       dispatch(setUserAuthenticated(false));
     } catch (error) {}
   };

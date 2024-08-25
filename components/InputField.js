@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet, TextInput } from 'react-native';
+import { View, StyleSheet, TextInput } from 'react-native';
 
 const InputField = ({
     extraStyles,

@@ -10,8 +10,6 @@ const useUserLogin = () => {
   const dispatch = useDispatch();
   const userLoginFunc = async (email, password) => {
     try {
-      console.log(email);
-      console.log(password);
       setIsLoading(true);
       const userLogged = await signInWithEmailAndPassword(
         auth,

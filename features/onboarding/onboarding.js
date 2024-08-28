@@ -5,7 +5,6 @@ import { useRef, useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Paginator from "./paginator";
 import NextButton from "./nextButton";
-import { LinearGradient } from "expo-linear-gradient";
 import { useDispatch } from "react-redux";
 import { setOnboardingCompleted } from "./onBoarding.slice";
 

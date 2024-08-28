@@ -1,20 +1,39 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
+import Animated, { useSharedValue, withSpring, useAnimatedStyle } from 'react-native-reanimated';
 
 const PrimaryButton = ({ 
   onPress = () => {}, 
-  rippleColor = '#31ed23',  
+  rippleColor = 'transparent',  
   customStyles,
   buttonText,
 }) => {
+  const width = useSharedValue(170);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      width: width.value,
+    };
+  });
+
+  const handlePress = () => {
+    width.value = withSpring(width.value+20);
+    setTimeout(() => {
+      width.value = 170;
+    }, 500);
+    onPress();
+  };
+
   return (
     <View style={styles.buttonContainer}>
-      <Pressable
-        style={styles.signUpButtonContainer}
-        android_ripple={{ color: rippleColor }}
-        onPress={onPress}
-      >
-        <Text style={styles.buttonText}>{buttonText}</Text>
-      </Pressable>
+      <Animated.View style={[animatedStyle]}>
+        <Pressable
+          style={[styles.signUpButtonContainer]}
+          android_ripple={{ color: rippleColor }}
+          onPress={handlePress}
+        >
+          <Text style={styles.buttonText}>{buttonText}</Text>
+        </Pressable>
+      </Animated.View>
     </View>
   );
 };
@@ -25,7 +44,7 @@ const styles = StyleSheet.create({
   },
   signUpButtonContainer: {
     height: 60,
-    width: '50%',
+    // width: '50%',
     borderWidth: 1.3,
     borderRadius: 45,
     backgroundColor: '#31b258',

@@ -1,5 +1,5 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
-import Animated, { useSharedValue, withSpring, useAnimatedStyle } from 'react-native-reanimated';
+import Animated, { useSharedValue, withSpring, useAnimatedStyle, withRepeat } from 'react-native-reanimated';
 
 const PrimaryButton = ({ 
   onPress = () => {}, 
@@ -7,19 +7,21 @@ const PrimaryButton = ({
   customStyles,
   buttonText,
 }) => {
-  const width = useSharedValue(170);
+  const scale = useSharedValue(1);
+  const opacity = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      width: width.value,
+      transform: [
+        {scale: scale.value}
+    ],
+    opacity: opacity.value
     };
   });
-
+  
   const handlePress = () => {
-    width.value = withSpring(width.value+20);
-    setTimeout(() => {
-      width.value = 170;
-    }, 500);
+    scale.value = withRepeat(withSpring(0.9), 2, true);
+    opacity.value = withRepeat(withSpring(0.8), 2, true);
     onPress();
   };
 
@@ -40,11 +42,10 @@ const PrimaryButton = ({
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    // width: '70%'
+
   },
   signUpButtonContainer: {
     height: 60,
-    // width: '50%',
     borderWidth: 1.3,
     borderRadius: 45,
     backgroundColor: '#31b258',

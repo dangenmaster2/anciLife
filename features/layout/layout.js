@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   appContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    fontFamily: 'open-sans-bold',
+    // fontFamily: 'open-sans-bold',
   },
   background: {
     position: 'absolute',

@@ -2,7 +2,6 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import Auth from '../login/Auth';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,9 +13,12 @@ import OnBoarding from '../onboarding/onboarding';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectOnboardingCompleted, setOnboardingCompleted } from '../onboarding/onBoarding.slice';
 import UserInfo from '../userInfo/userInfo';
+import { selectUserInfoCollected, setUserInfoCollected } from './layout.slice';
+import Home from '../home/home';
 
 const Layout = ({ navigation }) => {
   const onboardingStatus = useSelector(selectOnboardingCompleted);
+  const userInfoCollected = useSelector(selectUserInfoCollected);
   const dispatch = useDispatch();
 
   const checkOnboarding = async () => {
@@ -32,15 +34,29 @@ const Layout = ({ navigation }) => {
     }
   }
 
-  useEffect(() => { checkOnboarding() }, [])
+  const checkUserInfoCollected = async () => {
+    try {
+      const userInfo = await AsyncStorage.getItem('@userInfoData');
+      if ( userInfo !== null) dispatch(setUserInfoCollected(true));
+    }
 
-  // const fontLoaded = useFonts({
-  //   'open-sans': require('../../assets/fonts/OpenSans-Regular.ttf'),
-  //   'open-sans-bold': require('../../assets/fonts/OpenSans-Bold.ttf'),
-  // });
-  // if (!fontLoaded) {
-  //   return <AppLoading />;
-  // }
+    catch(err) {
+      console.log(err)
+    }
+  }
+
+  useEffect(() => { 
+    checkOnboarding();
+    checkUserInfoCollected();
+  }, [])
+
+  const fontLoaded = useFonts({
+    'open-sans': require('../../assets/fonts/OpenSans-Regular.ttf'),
+    'open-sans-bold': require('../../assets/fonts/OpenSans-Bold.ttf'),
+  });
+  if (!fontLoaded) {
+    return <AppLoading />;
+  }
   return (
     <View style={styles.appContainer}>
       <LinearGradient
@@ -49,7 +65,7 @@ const Layout = ({ navigation }) => {
       />
 
         <StatusBar style='dark' />
-        {onboardingStatus ? <UserInfo /> : <OnBoarding />}
+        {userInfoCollected ? <Home navigation={navigation}/> : onboardingStatus ? <UserInfo navigation={navigation}/> : <OnBoarding />}
         {/* <Auth navigation={{navigation}} */}
     </View>
   );

@@ -3,37 +3,67 @@ import PrimaryButton from "../../components/PrimaryButton";
 import UserName from "./pages/userName";
 import { useDispatch, useSelector } from "react-redux";
 import Animated, { useSharedValue, withSpring } from 'react-native-reanimated';
-import { selectinfoDirectionIndex, selectUserInfoFocusSection, setInfoDirectionIndex, setUserName, USER_GENDER, USER_INTERESTS, USER_NAME } from "./userInfo.slice";
+import { selectinfoDirectionIndex, selectUserInfoFocusSection, setInfoDirectionIndex, setUserInterests, setUserName, USER_GENDER, USER_INTERESTS, USER_NAME } from "./userInfo.slice";
 import { useCallback, useEffect, useState } from "react";
 import UserGender from "./pages/userGender";
 import UserInterests from "./pages/userInterests";
+import { setUserInfoCollected } from "../layout/layout.slice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const availableHealthTopics = ['Natural Vitamins Source', 'Hair care', 'Anti-ageing', 'Yoga', 'Meditation', 'Eye care',
-    'Fat loss', 'Pregnancy', 'Holistic Daily life', 'Diet controls'];
+const HomePageLoading = () => {
+    return(
+        <Text style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>Home Page Loading</Text>
+    )
+}
 
-const UserInfo = () => {
+const UserInfo = ({navigation}) => {
     const userInfoDirectionIndex = useSelector(selectinfoDirectionIndex);
     const state_userInfoFocusSection = useSelector(selectUserInfoFocusSection);
     const width = useSharedValue(100);
     const dispatch = useDispatch();
+
+
     const [userName, setUserNameLocal] = useState('');
     const [gender, setGender] = useState(''); 
+    const [userTopicInterests, setUserTopicInterests] = useState([]);
+
+    const saveUserData = async () => {
+        console.log('topic interest ', userTopicInterests)
+        const userInfoData = JSON.stringify({userName, gender, userTopicInterests})
+        console.log(userInfoData);
+        try {
+            await AsyncStorage.setItem('@userInfoData', userInfoData);
+            dispatch(setUserInfoCollected(true));
+        }
+        catch(err) {
+            console.log(err)
+        }
+    }
+
     const userInfoFocusHandler = useCallback((param) => {
         width.value = withSpring(width.value + 50);
+        if (param === 1 && state_userInfoFocusSection === USER_INTERESTS) {
+            saveUserData();
+            navigation.navigate('home');
+            return;
+        }
         const focusedSectionIndex = userInfoDirectionIndex+param;
         dispatch(setInfoDirectionIndex(focusedSectionIndex > 0 ? userInfoDirectionIndex+param : 1));
-    }, [userInfoDirectionIndex])
-
-    useEffect(() => {
-        console.log('press gender ', gender, userName);
-    }, [gender, userName])
+    }, [userInfoDirectionIndex, userTopicInterests, state_userInfoFocusSection, navigation])
 
     return(
         <View style={styles.userInfoContainer}>
             <View style={styles.userInfoComponentsWrapper}>
-                {state_userInfoFocusSection === USER_NAME && <UserName userName = {userName} setUserNameLocal = {setUserNameLocal}/>}
+                {state_userInfoFocusSection === USER_NAME && 
+                    <UserName userName = {userName} 
+                    setUserNameLocal = {setUserNameLocal}
+                />}
                 {state_userInfoFocusSection === USER_GENDER && <UserGender setGender={setGender}/>}
-                {state_userInfoFocusSection === USER_INTERESTS && <UserInterests availableHealthTopics={availableHealthTopics}/>}
+                {state_userInfoFocusSection === USER_INTERESTS && 
+                <UserInterests 
+                    userTopicInterests = {userTopicInterests}
+                    setUserTopicInterests = {setUserTopicInterests}
+                />}
             </View>
             <View style={styles.previousNextButtonContainer}>
                 <PrimaryButton onPress={() => userInfoFocusHandler(-1)} buttonText = 'BACK'/>

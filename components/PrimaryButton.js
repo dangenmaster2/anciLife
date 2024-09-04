@@ -1,31 +1,51 @@
 import { View, Text, Pressable, StyleSheet } from 'react-native';
+import Animated, { useSharedValue, withSpring, useAnimatedStyle, withRepeat } from 'react-native-reanimated';
 
 const PrimaryButton = ({ 
   onPress = () => {}, 
-  rippleColor = '#31ed23',  
+  rippleColor = 'transparent',  
   customStyles,
   buttonText,
 }) => {
+  const scale = useSharedValue(1);
+  const opacity = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {scale: scale.value}
+    ],
+    opacity: opacity.value
+    };
+  });
+  
+  const handlePress = () => {
+    scale.value = withRepeat(withSpring(0.9), 2, true);
+    opacity.value = withRepeat(withSpring(0.8), 2, true);
+    onPress();
+  };
+
   return (
     <View style={styles.buttonContainer}>
-      <Pressable
-        style={styles.signUpButtonContainer}
-        android_ripple={{ color: rippleColor }}
-        onPress={onPress}
-      >
-        <Text style={styles.buttonText}>{buttonText}</Text>
-      </Pressable>
+      <Animated.View style={[animatedStyle]}>
+        <Pressable
+          style={[styles.signUpButtonContainer]}
+          android_ripple={{ color: rippleColor }}
+          onPress={handlePress}
+        >
+          <Text style={styles.buttonText}>{buttonText}</Text>
+        </Pressable>
+      </Animated.View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    // width: '70%'
+
   },
   signUpButtonContainer: {
     height: 60,
-    width: '50%',
     borderWidth: 1.3,
     borderRadius: 45,
     backgroundColor: '#31b258',

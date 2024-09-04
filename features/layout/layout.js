@@ -1,10 +1,7 @@
 import {
-  ActivityIndicator,
   StyleSheet,
   View,
 } from 'react-native';
-// import Login from '../login/login';
-import Auth from '../login/Auth';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,11 +12,15 @@ import { useEffect, useState } from 'react';
 import OnBoarding from '../onboarding/onboarding';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectOnboardingCompleted, setOnboardingCompleted } from '../onboarding/onBoarding.slice';
+import UserInfo from '../userInfo/userInfo';
+import { selectUserInfoCollected, setUserInfoCollected } from './layout.slice';
+import Home from '../home/home';
 
 const Layout = ({ navigation }) => {
   const onboardingStatus = useSelector(selectOnboardingCompleted);
+  const userInfoCollected = useSelector(selectUserInfoCollected);
   const dispatch = useDispatch();
-  
+
   const checkOnboarding = async () => {
     try {
       const value = await AsyncStorage.getItem('@viewedOnboarding');
@@ -33,7 +34,21 @@ const Layout = ({ navigation }) => {
     }
   }
 
-  useEffect(() => { checkOnboarding() }, [])
+  const checkUserInfoCollected = async () => {
+    try {
+      const userInfo = await AsyncStorage.getItem('@userInfoData');
+      if ( userInfo !== null) dispatch(setUserInfoCollected(true));
+    }
+
+    catch(err) {
+      console.log(err)
+    }
+  }
+
+  useEffect(() => { 
+    checkOnboarding();
+    checkUserInfoCollected();
+  }, [])
 
   const fontLoaded = useFonts({
     'open-sans': require('../../assets/fonts/OpenSans-Regular.ttf'),
@@ -45,30 +60,29 @@ const Layout = ({ navigation }) => {
   return (
     <View style={styles.appContainer}>
       <LinearGradient
-        colors={['#6cd626', 'transparent']}
+        colors={['#6cd626', 'black']}
         style={styles.background}
       />
 
         <StatusBar style='dark' />
-        {onboardingStatus ? <Auth navigation={{navigation}}/> : <OnBoarding />}
+        {userInfoCollected ? <Home navigation={navigation}/> : onboardingStatus ? <UserInfo navigation={navigation}/> : <OnBoarding />}
+        {/* <Auth navigation={{navigation}} */}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   appContainer: {
-    // paddingTop: 20,
-    // paddingHorizontal: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    fontFamily: 'open-sans-bold',
+    // fontFamily: 'open-sans-bold',
   },
   background: {
     position: 'absolute',
     left: 0,
     right: 0,
     top: 0,
-    height: 200,
+    height: '100%',
   },
   backgroundImage: {
     opacity: 0.15,

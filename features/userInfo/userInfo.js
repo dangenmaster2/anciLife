@@ -3,12 +3,13 @@ import PrimaryButton from "../../components/PrimaryButton";
 import UserName from "./pages/userName";
 import { useDispatch, useSelector } from "react-redux";
 import Animated, { useSharedValue, withSpring } from 'react-native-reanimated';
-import { selectinfoDirectionIndex, selectUserInfoFocusSection, setInfoDirectionIndex, setUserInterests, setUserName, USER_GENDER, USER_INTERESTS, USER_NAME } from "./userInfo.slice";
+import { selectinfoDirectionIndex, selectUserInfoFocusSection, setAllUserInfo, setInfoDirectionIndex, setUserInterests, setUserName, USER_GENDER, USER_INTERESTS, USER_NAME } from "./userInfo.slice";
 import { useCallback, useEffect, useState } from "react";
 import UserGender from "./pages/userGender";
 import UserInterests from "./pages/userInterests";
 import { setUserInfoCollected } from "../layout/layout.slice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { uid } from 'react-uid';
 
 const HomePageLoading = () => {
     return(
@@ -28,11 +29,12 @@ const UserInfo = ({navigation}) => {
     const [userTopicInterests, setUserTopicInterests] = useState([]);
 
     const saveUserData = async () => {
-        console.log('topic interest ', userTopicInterests)
-        const userInfoData = JSON.stringify({userName, gender, userTopicInterests})
-        console.log(userInfoData);
+        //this id will be generated in combination with name and dob for guests only
+        const userId = uid(userName);
+        const userInfoData = JSON.stringify({userId, userName, gender, userTopicInterests})
         try {
             await AsyncStorage.setItem('@userInfoData', userInfoData);
+            dispatch(setAllUserInfo(JSON.parse(userInfoData)))
             dispatch(setUserInfoCollected(true));
         }
         catch(err) {

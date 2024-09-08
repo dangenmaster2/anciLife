@@ -12,15 +12,25 @@
 //     'react-native-reanimated/plugin', //always at last
 //   ],
 // };
-module.exports = {
-  presets: [['module:metro-react-native-babel-preset', { useTransformReactJSXExperimental: true }]],
-  plugins: [
-    [
-      '@babel/plugin-transform-react-jsx',
-      {
-        runtime: 'automatic',
-      },
+// module.exports = {
+//   presets: [['module:metro-react-native-babel-preset', { useTransformReactJSXExperimental: true }]],
+//   plugins: [
+//     [
+//       '@babel/plugin-transform-react-jsx',
+//       {
+//         runtime: 'automatic',
+//       },
+//     ],
+//     ['react-native-reanimated/plugin'],
+//   ]
+// }
+module.exports = function(api) {
+  api.cache(true);
+  return {
+    presets: ['babel-preset-expo'],
+    plugins: [
+      // Ensure 'react-native-reanimated/plugin' is last
+      'react-native-reanimated/plugin',
     ],
-    ['react-native-reanimated/plugin'],
-  ]
-}
+  };
+};

@@ -2,65 +2,81 @@ import { Pressable, StyleSheet, Text, View } from "react-native"
 import useLogout from "../hooks/useLogout";
 import PrimaryButton from "../../components/PrimaryButton";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { db,  collection, getDocs } from "../../firebase/firebase";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useWindowDimensions } from 'react-native';
+import AncilifeLogo from '../../assets/logo/ancilife_logo.svg';
+import RenderHtml from 'react-native-render-html';
+import Entypo from '@expo/vector-icons/Entypo';
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { setUserInfoCollected } from "../layout/layout.slice";
+import { selectAllUserInfo, setAllUserInfo } from "../userInfo/userInfo.slice";
+import { fetchAllBlogs, fetchUserData, selectAllBlogFetchStatus, selectAllBlogsResponse, selectAllBlogsWithId, selectFetchUserDataStatus } from "./home.slice";
+import ArticleGrid from "./homeComponents/articleGrid";
+import AnciLifeLogo from "../../assets/logo/ancilife_logo";
 
 const Home = ({navigation}) => {
     const { userLogoutFnc } = useLogout();
     const dispatch = useDispatch();
-    const clearOnboarding = async () => {
-        try {
-            await AsyncStorage.removeItem('@viewedOnboarding')
-        }
-        catch(err) {
-            console.log(err)
-        }
-    }
+    const userDataFetchStatus = useSelector(selectFetchUserDataStatus);
+    const allBlogFetchStatus = useSelector(selectAllBlogFetchStatus);
+    const blogsToRender = useSelector(selectAllBlogsWithId);
+    const { width } = useWindowDimensions();
+
     const clearUserInfoData = async () => {
         try {
-            console.log('clearing user info')
             await AsyncStorage.removeItem('@userInfoData')
-            console.log('clearing user info successsful')
             dispatch(setUserInfoCollected(false));
         }
         catch(err) {
             console.log(err)
         }
     }
-    useEffect(() => {
-        const colRef = collection(db, 'articles');
-        getDocs(colRef).then((snapshot) => {
-            let articles = [];
-            snapshot.docs.forEach((doc) => {
-                // console.log('---data ', doc.data())
-                // articles.push({...doc.data(), id:doc.id})
-            })
-        })
-        return () => {
-            console.log('home screen unmounting')
-        }
-    }, [])
+
+    useEffect(()=> {
+        dispatch(fetchUserData());
+        dispatch(fetchAllBlogs());
+    },[])
+
     return(
         <View style={styles.homeScreenContainer}>
-            <PrimaryButton
-                onPress={() => {
-                    clearUserInfoData();
-                    navigation.navigate('layout');
-                }}
-                buttonText='LOG OUT'
-            >
-            </PrimaryButton>
+            {
+                allBlogFetchStatus !== 'succeeded' ? 
+                <View>
+                    <AnciLifeLogo height={130} width={130} color='green'/>
+                </View>
+                :
+                <View>
+                    <ArticleGrid blogs={blogsToRender} />
+                    {/* {blogsToRender?.map((blog, index) => (
+                        <View key={blog.id}>
+                            <Text>{blog.title}</Text>
+                            <RenderHtml 
+                                contentWidth={width}
+                                source={{html: blog.content}}
+                            />
+                        </View>
+                    ))} */}
+                </View>
+            }
         </View>
     )
 }
 const styles = StyleSheet.create({
     homeScreenContainer: {
-        flex: 1,
+        // flex: 1,
+        height: '100%',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
 })
 
 export default Home;
+
+// const clearOnboarding = async () => {
+    //     try {
+    //         await AsyncStorage.removeItem('@viewedOnboarding')
+    //     }
+    //     catch(err) {
+    //         console.log(err)
+    //     }
+    // }

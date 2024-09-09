@@ -1,66 +1,125 @@
-import { Pressable, StyleSheet, Text, View } from "react-native"
+import { StyleSheet, Text, View } from "react-native";
+import Animated, { useSharedValue, useAnimatedStyle, withSpring, withRepeat, withTiming, interpolateColor } from 'react-native-reanimated';
 import useLogout from "../hooks/useLogout";
-import PrimaryButton from "../../components/PrimaryButton";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { db,  collection, getDocs } from "../../firebase/firebase";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { setUserInfoCollected } from "../layout/layout.slice";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAllBlogs, fetchUserData, selectAllBlogFetchStatus, selectAllBlogsResponse, selectAllBlogsWithId, selectFetchUserDataStatus } from "./home.slice";
+import ArticleGrid from "./homeComponents/articleGrid";
+import AnciLifeLogo from "../../assets/logo/ancilife_logo";
+
+const Colors = {
+    start: {
+      text: 'white'
+    },
+    end: {
+      text: 'green'
+    }
+  }
 
 const Home = ({navigation}) => {
     const { userLogoutFnc } = useLogout();
     const dispatch = useDispatch();
-    const clearOnboarding = async () => {
-        try {
-            await AsyncStorage.removeItem('@viewedOnboarding')
+    const allBlogFetchStatus = useSelector(selectAllBlogFetchStatus);
+    const blogsToRender = useSelector(selectAllBlogsWithId);
+
+    const scale = useSharedValue(1);
+    const fontSizeText = useSharedValue(20);
+    const colorProgress = useSharedValue(0);
+
+    const animatedStyle = useAnimatedStyle(() => {
+        return {
+            transform: [
+                {scale: scale.value}
+            ],
         }
-        catch(err) {
-            console.log(err)
+    })
+
+    const textAnimatedStyle = useAnimatedStyle(()=> {
+        return {
+            fontSize: fontSizeText.value
         }
-    }
-    const clearUserInfoData = async () => {
-        try {
-            console.log('clearing user info')
-            await AsyncStorage.removeItem('@userInfoData')
-            console.log('clearing user info successsful')
-            dispatch(setUserInfoCollected(false));
-        }
-        catch(err) {
-            console.log(err)
-        }
-    }
+    })
+
+    const textColorAnimateStyle = useAnimatedStyle(()=> {
+        const backgroundColors = interpolateColor(
+            colorProgress.value,
+            [0,1],
+            [Colors.start.text, Colors.end.text]
+          )
+          return { color: backgroundColors }
+    })
+
     useEffect(() => {
-        const colRef = collection(db, 'articles');
-        getDocs(colRef).then((snapshot) => {
-            let articles = [];
-            snapshot.docs.forEach((doc) => {
-                // console.log('---data ', doc.data())
-                // articles.push({...doc.data(), id:doc.id})
-            })
-        })
-        return () => {
-            console.log('home screen unmounting')
-        }
+        scale.value = withRepeat(withSpring(0.9), 2);
+        fontSizeText.value = withSpring(40);
+        colorProgress.value = withTiming(1);
     }, [])
+
+    useEffect(()=> {
+        dispatch(fetchUserData());
+        dispatch(fetchAllBlogs());
+    },[])
+
     return(
         <View style={styles.homeScreenContainer}>
-            <PrimaryButton
-                onPress={() => {
-                    clearUserInfoData();
-                    navigation.navigate('layout');
-                }}
-                buttonText='LOG OUT'
-            >
-            </PrimaryButton>
+            {
+                allBlogFetchStatus !== 'succeeded' ? 
+                <View>
+                    <View style={{height: 70, justifyContent: 'center', alignItems: 'center'}}>
+                        <AnciLifeLogo 
+                            height={130} 
+                            width={130} 
+                            color='green' 
+                            style={[animatedStyle, styles.loadingLogo]}/>
+                    </View>
+                    <View style={{height: 150, justifyContent: 'center', alignItems: 'center'}}>
+                        <Animated.Text 
+                        style={[styles.loadingText, textAnimatedStyle, textColorAnimateStyle]}
+                        >AnciLife</Animated.Text>
+                    </View>
+                </View>
+                :
+                <View>
+                    <ArticleGrid blogs={blogsToRender} navigation={navigation}/>
+                </View>
+            }
         </View>
     )
 }
 const styles = StyleSheet.create({
+    loadingText: {
+        textAlign: 'center',
+        fontWeight: 'bold',
+        fontFamily: 'PlaypenSans-Bold'
+    },
+    loadingLogo: {
+        scale: 2
+    },
     homeScreenContainer: {
-        flex: 1,
+        // flex: 1,
+        height: '100%',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        paddingVertical: 40
     },
 })
 
 export default Home;
+
+// const clearOnboarding = async () => {
+    //     try {
+    //         await AsyncStorage.removeItem('@viewedOnboarding')
+    //     }
+    //     catch(err) {
+    //         console.log(err)
+    //     }
+    // }
+    // const clearUserInfoData = async () => {
+    //     try {
+    //         await AsyncStorage.removeItem('@userInfoData')
+    //         dispatch(setUserInfoCollected(false));
+    //     }
+    //     catch(err) {
+    //         console.log(err)
+    //     }
+    // }

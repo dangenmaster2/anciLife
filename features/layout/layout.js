@@ -15,11 +15,20 @@ import { selectOnboardingCompleted, setOnboardingCompleted } from '../onboarding
 import UserInfo from '../userInfo/userInfo';
 import { selectUserInfoCollected, setUserInfoCollected } from './layout.slice';
 import Home from '../home/home';
+import { setAllUserInfo } from '../userInfo/userInfo.slice';
 
 const Layout = ({ navigation }) => {
   const onboardingStatus = useSelector(selectOnboardingCompleted);
   const userInfoCollected = useSelector(selectUserInfoCollected);
   const dispatch = useDispatch();
+
+  const [loaded, error] = useFonts({
+    'Inter-Black': require('../../assets/fonts/Rubik/Rubik-Italic-VariableFont_wght.ttf')
+  });
+
+  if (!loaded && !error) {
+    return null;
+  }
 
   const checkOnboarding = async () => {
     try {
@@ -37,7 +46,10 @@ const Layout = ({ navigation }) => {
   const checkUserInfoCollected = async () => {
     try {
       const userInfo = await AsyncStorage.getItem('@userInfoData');
-      if ( userInfo !== null) dispatch(setUserInfoCollected(true));
+      if ( userInfo !== null) {
+        dispatch(setAllUserInfo(JSON.parse(userInfo)))
+        dispatch(setUserInfoCollected(true));
+      }
     }
 
     catch(err) {
@@ -49,24 +61,18 @@ const Layout = ({ navigation }) => {
     checkOnboarding();
     checkUserInfoCollected();
   }, [])
-
-  const fontLoaded = useFonts({
-    'open-sans': require('../../assets/fonts/OpenSans-Regular.ttf'),
-    'open-sans-bold': require('../../assets/fonts/OpenSans-Bold.ttf'),
-  });
-  if (!fontLoaded) {
-    return <AppLoading />;
-  }
+  
   return (
     <View style={styles.appContainer}>
-      <LinearGradient
+      {/* <LinearGradient
         colors={['#6cd626', 'black']}
         style={styles.background}
-      />
+      /> */}
 
         <StatusBar style='dark' />
-        {userInfoCollected ? <Home navigation={navigation}/> : onboardingStatus ? <UserInfo navigation={navigation}/> : <OnBoarding />}
+        {/* {userInfoCollected ? <Home navigation={navigation}/> : onboardingStatus ? <UserInfo navigation={navigation}/> : <OnBoarding />} */}
         {/* <Auth navigation={{navigation}} */}
+        <Home navigation={navigation}/>
     </View>
   );
 };
@@ -75,7 +81,7 @@ const styles = StyleSheet.create({
   appContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    // fontFamily: 'open-sans-bold',
+    fontFamily: 'protest-guerilla',
   },
   background: {
     position: 'absolute',

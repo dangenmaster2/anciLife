@@ -22,6 +22,14 @@ const Layout = ({ navigation }) => {
   const userInfoCollected = useSelector(selectUserInfoCollected);
   const dispatch = useDispatch();
 
+  const [loaded, error] = useFonts({
+    'Inter-Black': require('../../assets/fonts/Rubik/Rubik-Italic-VariableFont_wght.ttf')
+  });
+
+  if (!loaded && !error) {
+    return null;
+  }
+
   const checkOnboarding = async () => {
     try {
       const value = await AsyncStorage.getItem('@viewedOnboarding');

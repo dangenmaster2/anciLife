@@ -99,7 +99,6 @@ const homeSlice = createSlice({
 
 export const selectAllBlogsWithId = createSelector([selectAllBlogsResponse],(allBlogsResponse) => {
     if(!allBlogsResponse) return null;
-    // console.log('response', allBlogsResponse)
     const extractedData = allBlogsResponse.map(blog => ({
         id: blog.id,
         category: blog.blogs.category,

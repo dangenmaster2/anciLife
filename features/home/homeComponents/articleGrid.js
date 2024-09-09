@@ -1,12 +1,13 @@
-import { Dimensions, FlatList, Image, StyleSheet, Text, View } from "react-native"
+import { Dimensions, FlatList, Image, Pressable, StyleSheet, Text, View } from "react-native"
 // import AutoCode from '../../../svgs/autoCode.svg';
 // import AncilifeLogo from '../../../assets/logo/ancilife_logo.svg';
 import AutoCode from "../../../assets/logo/ancilife_logo";
 import AnciLifeLogo from "../../../assets/logo/ancilife_logo";
 import { useFonts } from 'expo-font';
+import { useEffect } from "react";
 const {height, width} = Dimensions.get('window');
 
-const ArticleGrid = ({item}) => {
+const ArticleGrid = ({item, onPress, navigation}) => {
     const [loaded, error] = useFonts({
         'Inter-Black': require('../../../assets/fonts/Rubik/Rubik-Italic-VariableFont_wght.ttf'),
       });
@@ -15,19 +16,33 @@ const ArticleGrid = ({item}) => {
         return null;
       }
     return(
-        <View style={styles.articleGridContainer}>
-            <Image
-                style={styles.blogThumbnail}
-                source={{
-                    uri: item.blogThumnail,
-                }}
-            />
-            <Text style={{ fontFamily: 'Inter-Black', fontSize: 15 }}>{item.title}</Text>
-        </View>
+        <Pressable onPress={onPress}>
+            <View style={styles.articleGridContainer} onPress={onPress}>
+                <Image
+                    style={styles.blogThumbnail}
+                    source={{
+                        uri: item.blogThumnail,
+                    }}
+                    navigation={navigation}
+                />
+                <Text style={{ fontFamily: 'Inter-Black', fontSize: 15 }}>{item.title}</Text>
+            </View>
+        </Pressable>
     )
 }
 
-const ArticlesGrid = ({ blogs }) => {
+const ArticlesGrid = ({ blogs , navigation }) => {
+    const articleGridPressHandler = (item) => {
+        navigation.navigate('Article', {
+            articleId: item.id
+        });
+    }
+
+    useEffect(() => {
+        return () => console.log('article grid unmounting');
+        
+    }, [])
+
     return(
         <View style={styles.articlesGridContainer}>
             <FlatList 
@@ -35,14 +50,12 @@ const ArticlesGrid = ({ blogs }) => {
                 style={styles.flatListArticleContainer}
                 renderItem={({ item }) => <ArticleGrid 
                     item={item} 
-                    // onPress={() => {gridPressHandler(item)}}
-                    // selectedId={selectedId}
-                    // currentPressedIndex={currentPressedIndex}
+                    onPress={() => {articleGridPressHandler(item)}}
                     />}
-                keyExtractor={(item) => item.id.toString()}
-                showsHorizontalScrollIndicator={false}
-                horizontal = {true}
-            />
+                    keyExtractor={(item) => item.id.toString()}
+                    showsHorizontalScrollIndicator={false}
+                    horizontal = {true}
+                />
         </View>
     )
 }

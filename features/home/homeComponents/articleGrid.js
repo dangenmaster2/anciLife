@@ -1,34 +1,54 @@
 import { Dimensions, FlatList, Image, Pressable, StyleSheet, Text, View } from "react-native"
-// import AutoCode from '../../../svgs/autoCode.svg';
-// import AncilifeLogo from '../../../assets/logo/ancilife_logo.svg';
-import AutoCode from "../../../assets/logo/ancilife_logo";
-import AnciLifeLogo from "../../../assets/logo/ancilife_logo";
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { useFonts } from 'expo-font';
 import { useEffect } from "react";
 const {height, width} = Dimensions.get('window');
 
 const ArticleGrid = ({item, onPress, navigation}) => {
-    const [loaded, error] = useFonts({
-        'Inter-Black': require('../../../assets/fonts/Rubik/Rubik-Italic-VariableFont_wght.ttf'),
-      });
+    // const [loaded, error] = useFonts({
+    //     'Inter-Black': require('../../../assets/fonts/Rubik/Rubik-Italic-VariableFont_wght.ttf'),
+    //   });
     
-      if (!loaded && !error) {
-        return null;
-      }
+    //   if (!loaded && !error) {
+    //     return null;
+    //   }
     return(
         <Pressable onPress={onPress}>
-            <View style={styles.articleGridContainer} onPress={onPress}>
+            <View style={styles.articleGridContainer}>
                 <Image
                     style={styles.blogThumbnail}
                     source={{
                         uri: item.blogThumnail,
                     }}
-                    navigation={navigation}
                 />
-                <Text style={{ fontFamily: 'Inter-Black', fontSize: 15 }}>{item.title}</Text>
+                <Text numberOfLines={2} style={{ 
+                    // fontFamily: 'Inter-Black', 
+                    fontSize: 18,
+                    fontWeight: 'bold'
+                     }}>{item.title}</Text>
             </View>
         </Pressable>
     )
+}
+
+const AllArticlesHeader = ({ navigation }) => {
+
+const allArticlesPressHandler = () => {
+    navigation.navigate('RecentArticles')
+}
+
+return(
+    <View style={styles.allArticlesHeader}>
+        <Text style={{
+            fontSize: 20, 
+            paddingLeft: 5,
+            fontWeight: 'bold'
+            }}>Recent Articles</Text>
+            <Pressable onPress={allArticlesPressHandler}>
+                <AntDesign name="arrowright" size={24} color="green" />
+            </Pressable>
+    </View>
+)
 }
 
 const ArticlesGrid = ({ blogs , navigation }) => {
@@ -45,6 +65,7 @@ const ArticlesGrid = ({ blogs , navigation }) => {
 
     return(
         <View style={styles.articlesGridContainer}>
+            <AllArticlesHeader navigation={navigation}/>
             <FlatList 
                 data={blogs}
                 style={styles.flatListArticleContainer}
@@ -64,18 +85,21 @@ const styles = StyleSheet.create({
     logo: {
         height: 2
     },
+    allArticlesHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        height: 50
+    },
     articlesGridContainer: {
         flex: 1,
-        paddingHorizontal: 20,
         paddingTop: 20
-        // justifyContent: 'center',
-        // alignItems: 'flex-start'
     },
     articleGridContainer: {
         height: (width/2.4),
         width: (width/2.4),
         borderRadius: 10,
-        margin: 2.5
+        marginRight: 6.5
     },
     blogThumbnail: {
         height: (width/2.4),

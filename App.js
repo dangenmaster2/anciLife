@@ -8,11 +8,21 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import AntDesign from '@expo/vector-icons/AntDesign';
 
 import Home from './features/home/home';
-import OnBoarding from './features/onboarding/onboarding';
 import Meditation from './features/meditation/meditation';
 import Profile from './features/profile/profile';
 import Explore from './features/explore/explore';
 import Article from './features/home/homeComponents/article';
+import RecentArticles from './features/home/homeComponents/recentArticles';
+
+import { createNavigationContainerRef } from '@react-navigation/native';
+
+export const navigationRef = createNavigationContainerRef();
+
+export function navigate(name, params) {
+  if (navigationRef.isReady()) {
+    navigationRef.navigate(name, params);
+  }
+}
 
 const HomeStack = createNativeStackNavigator();
 const HomeStackScreen = () => {
@@ -20,6 +30,7 @@ const HomeStackScreen = () => {
     <HomeStack.Navigator>
       <HomeStack.Screen options={{ headerShown: false }} name="MainHome" component={Home} />
       <HomeStack.Screen options={{ headerShown: false }} name="Article" component={Article} />
+      <HomeStack.Screen options={{ headerShown: false }} name="RecentArticles" component={RecentArticles} />
     </HomeStack.Navigator>
   )
 }
@@ -29,7 +40,7 @@ const Tab = createBottomTabNavigator();
 function App() {
   return (
     <Provider store={store}>
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
       <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {

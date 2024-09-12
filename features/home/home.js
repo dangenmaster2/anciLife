@@ -4,8 +4,11 @@ import useLogout from "../hooks/useLogout";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllBlogs, fetchUserData, selectAllBlogFetchStatus, selectAllBlogsResponse, selectAllBlogsWithId, selectFetchUserDataStatus } from "./home.slice";
+import AntDesign from '@expo/vector-icons/AntDesign';
+import Feather from '@expo/vector-icons/Feather';
 import ArticleGrid from "./homeComponents/articleGrid";
 import AnciLifeLogo from "../../assets/logo/ancilife_logo";
+import Quote from "./homeComponents/quote";
 
 const Colors = {
     start: {
@@ -15,6 +18,25 @@ const Colors = {
       text: 'green'
     }
   }
+
+const HomeHeader = () => {
+    return(
+        <View style={styles.homeHeaderView}>
+            <View style={styles.HomeHeaderFirstCol}>
+                <AnciLifeLogo 
+                    height={30} 
+                    width={30} 
+                    color='green' 
+                />
+                <Text style={{fontSize: 20, paddingLeft: 10, fontWeight: 'bold'}}>anciLife</Text>
+            </View>
+            <View style={styles.HomeHeaderSecondCol}>
+                <AntDesign name="notification" size={24} color="green" style={{paddingLeft: 90}}/>
+                <Feather name="bookmark" size={24} color="green" />
+            </View>
+        </View>
+    )
+}
 
 const Home = ({navigation}) => {
     const { userLogoutFnc } = useLogout();
@@ -80,6 +102,8 @@ const Home = ({navigation}) => {
                 </View>
                 :
                 <View>
+                    <HomeHeader />
+                    <Quote />
                     <ArticleGrid blogs={blogsToRender} navigation={navigation}/>
                 </View>
             }
@@ -95,12 +119,27 @@ const styles = StyleSheet.create({
     loadingLogo: {
         scale: 2
     },
+    homeHeaderView: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+    },
+    HomeHeaderFirstCol: {
+        flexDirection: 'row',
+        // flex: 2
+    },
+    HomeHeaderSecondCol: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        flex: .65
+    },
     homeScreenContainer: {
         // flex: 1,
         height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
-        paddingVertical: 40
+        paddingVertical: 70,
+        paddingHorizontal: 25
     },
 })
 

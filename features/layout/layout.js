@@ -1,29 +1,29 @@
-import {
-  StyleSheet,
-  View,
-} from 'react-native';
-import { StatusBar } from 'expo-status-bar';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import {StyleSheet, View} from 'react-native';
+import {StatusBar} from 'expo-status-bar';
+import {LinearGradient} from 'expo-linear-gradient';
+import {Ionicons} from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFonts } from 'expo-font';
+import {useFonts} from 'expo-font';
 import AppLoading from 'expo-app-loading';
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 import OnBoarding from '../onboarding/onboarding';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectOnboardingCompleted, setOnboardingCompleted } from '../onboarding/onBoarding.slice';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  selectOnboardingCompleted,
+  setOnboardingCompleted,
+} from '../onboarding/onBoarding.slice';
 import UserInfo from '../userInfo/userInfo';
-import { selectUserInfoCollected, setUserInfoCollected } from './layout.slice';
+import {selectUserInfoCollected, setUserInfoCollected} from './layout.slice';
 import Home from '../home/home';
-import { setAllUserInfo } from '../userInfo/userInfo.slice';
+import {setAllUserInfo} from '../userInfo/userInfo.slice';
 
-const Layout = ({ navigation }) => {
+const Layout = ({navigation}) => {
   const onboardingStatus = useSelector(selectOnboardingCompleted);
   const userInfoCollected = useSelector(selectUserInfoCollected);
   const dispatch = useDispatch();
 
   const [loaded, error] = useFonts({
-    'Inter-Black': require('../../assets/fonts/Rubik/Rubik-Italic-VariableFont_wght.ttf')
+    'Inter-Black': require('../../assets/fonts/Rubik/Rubik-Italic-VariableFont_wght.ttf'),
   });
 
   if (!loaded && !error) {
@@ -37,31 +37,28 @@ const Layout = ({ navigation }) => {
       if (value !== null) {
         dispatch(setOnboardingCompleted(true));
       }
+    } catch (error) {
+      console.log(error);
     }
-    catch(error) {
-      console.log(error)
-    }
-  }
+  };
 
   const checkUserInfoCollected = async () => {
     try {
       const userInfo = await AsyncStorage.getItem('@userInfoData');
-      if ( userInfo !== null) {
-        dispatch(setAllUserInfo(JSON.parse(userInfo)))
+      if (userInfo !== null) {
+        dispatch(setAllUserInfo(JSON.parse(userInfo)));
         dispatch(setUserInfoCollected(true));
       }
+    } catch (err) {
+      console.log(err);
     }
+  };
 
-    catch(err) {
-      console.log(err)
-    }
-  }
+  // useEffect(() => {
+  //   checkOnboarding();
+  //   checkUserInfoCollected();
+  // }, []);
 
-  useEffect(() => { 
-    checkOnboarding();
-    checkUserInfoCollected();
-  }, [])
-  
   return (
     <View style={styles.appContainer}>
       {/* <LinearGradient
@@ -69,10 +66,16 @@ const Layout = ({ navigation }) => {
         style={styles.background}
       /> */}
 
-        <StatusBar style='dark' />
-        {/* {userInfoCollected ? <Home navigation={navigation}/> : onboardingStatus ? <UserInfo navigation={navigation}/> : <OnBoarding />} */}
-        {/* <Auth navigation={{navigation}} */}
-        <Home navigation={navigation}/>
+      <StatusBar style="dark" />
+      {userInfoCollected ? (
+        <Home navigation={navigation} />
+      ) : onboardingStatus ? (
+        <UserInfo navigation={navigation} />
+      ) : (
+        <OnBoarding />
+      )}
+      {/* <Auth navigation={{navigation}} */}
+      {/* <Home navigation={navigation} /> */}
     </View>
   );
 };
@@ -92,7 +95,7 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     opacity: 0.15,
-  }
+  },
 });
 
 export default Layout;

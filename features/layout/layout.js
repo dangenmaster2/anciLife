@@ -22,9 +22,9 @@ const Layout = ({ navigation }) => {
   const userInfoCollected = useSelector(selectUserInfoCollected);
   const dispatch = useDispatch();
 
-  const [loaded, error] = useFonts({
-    'Inter-Black': require('../../assets/fonts/Rubik/Rubik-Italic-VariableFont_wght.ttf')
-  });
+  // const [loaded, error] = useFonts({
+  //   'Inter-Black': require('../../assets/fonts/Rubik/Rubik-Italic-VariableFont_wght.ttf')
+  // });
 
   if (!loaded && !error) {
     return null;
@@ -57,10 +57,10 @@ const Layout = ({ navigation }) => {
     }
   }
 
-  useEffect(() => { 
-    checkOnboarding();
-    checkUserInfoCollected();
-  }, [])
+  // useEffect(() => { 
+  //   checkOnboarding();
+  //   checkUserInfoCollected();
+  // }, [])
   
   return (
     <View style={styles.appContainer}>
@@ -70,9 +70,9 @@ const Layout = ({ navigation }) => {
       /> */}
 
         <StatusBar style='dark' />
-        {/* {userInfoCollected ? <Home navigation={navigation}/> : onboardingStatus ? <UserInfo navigation={navigation}/> : <OnBoarding />} */}
+        {userInfoCollected ? <Home navigation={navigation}/> : onboardingStatus ? <UserInfo navigation={navigation}/> : <OnBoarding />}
         {/* <Auth navigation={{navigation}} */}
-        <Home navigation={navigation}/>
+        {/* <Home navigation={navigation}/> */}
     </View>
   );
 };

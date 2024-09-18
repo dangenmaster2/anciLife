@@ -1,50 +1,59 @@
 import { Dimensions, FlatList, Image, Pressable, StyleSheet, Text, View } from "react-native"
-// import AutoCode from '../../../svgs/autoCode.svg';
-// import AncilifeLogo from '../../../assets/logo/ancilife_logo.svg';
-import AutoCode from "../../../assets/logo/ancilife_logo";
-import AnciLifeLogo from "../../../assets/logo/ancilife_logo";
-import { useFonts } from 'expo-font';
-import { useEffect } from "react";
+import AntDesign from '@expo/vector-icons/AntDesign';
+import { navigate } from "../../../components/Utility";
 const {height, width} = Dimensions.get('window');
 
-const ArticleGrid = ({item, onPress, navigation}) => {
-    const [loaded, error] = useFonts({
-        'Inter-Black': require('../../../assets/fonts/Rubik/Rubik-Italic-VariableFont_wght.ttf'),
-      });
-    
-      if (!loaded && !error) {
-        return null;
-      }
+const ArticleGrid = ({item, onPress}) => {
     return(
         <Pressable onPress={onPress}>
-            <View style={styles.articleGridContainer} onPress={onPress}>
+            <View style={styles.articleGridContainer}>
                 <Image
                     style={styles.blogThumbnail}
                     source={{
                         uri: item.blogThumnail,
                     }}
-                    navigation={navigation}
                 />
-                <Text style={{ fontFamily: 'Inter-Black', fontSize: 15 }}>{item.title}</Text>
+                <Text numberOfLines={2} style={{ 
+                    fontFamily: 'Product Sans Regular',
+                    fontSize: 18,
+                     }}>{item.title}</Text>
             </View>
         </Pressable>
     )
 }
 
-const ArticlesGrid = ({ blogs , navigation }) => {
+const AllArticlesHeader = ({ headerTitle, mainRoute }) => {
+
+const allArticlesPressHandler = () => {
+    navigate(mainRoute, {
+        headerTitle
+    })
+}
+
+return(
+    <View style={styles.allArticlesHeader}>
+        <Text style={{
+            fontSize: 20, 
+            paddingLeft: 5,
+            fontFamily: 'Product Sans Bold'
+            }}>{headerTitle}</Text>
+            <Pressable onPress={allArticlesPressHandler}>
+                <AntDesign name="arrowright" size={24} color="green" />
+            </Pressable>
+    </View>
+)
+}
+
+const ArticlesGrid = ({ blogs, headerTitle, mainRoute }) => {
     const articleGridPressHandler = (item) => {
-        navigation.navigate('Article', {
+        navigate('Article', {
             articleId: item.id
         });
     }
 
-    useEffect(() => {
-        return () => console.log('article grid unmounting');
-        
-    }, [])
-
     return(
         <View style={styles.articlesGridContainer}>
+            <AllArticlesHeader headerTitle={headerTitle} mainRoute={mainRoute}/>
             <FlatList 
                 data={blogs}
                 style={styles.flatListArticleContainer}
@@ -64,18 +73,21 @@ const styles = StyleSheet.create({
     logo: {
         height: 2
     },
+    allArticlesHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        height: 50
+    },
     articlesGridContainer: {
         flex: 1,
-        paddingHorizontal: 20,
-        paddingTop: 20
-        // justifyContent: 'center',
-        // alignItems: 'flex-start'
+        paddingTop: 10
     },
     articleGridContainer: {
         height: (width/2.4),
         width: (width/2.4),
         borderRadius: 10,
-        margin: 2.5
+        marginRight: 6.5
     },
     blogThumbnail: {
         height: (width/2.4),

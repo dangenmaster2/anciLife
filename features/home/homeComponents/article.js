@@ -34,6 +34,7 @@ const Article = ({ route }) => {
     const htmlRendererStyles = {
         body: {
           whiteSpace: 'normal',
+        //   fontFamily: 'Product Sans Regular',
           color: 'black',
           margin: 10,
           fontSize: 18
@@ -43,16 +44,25 @@ const Article = ({ route }) => {
         }
     };
 
+    const defaultTextProps = {
+        style: {
+            fontFamily: 'Product Sans Regular',
+        },
+    };
+
     return(
         <View style={styles.articlePageContainer}>
             <ScrollView>
-                <ArticleMainImage source={thumbnail} />
+                <View style={styles.articleMainImageContainer}>
+                    <ArticleMainImage source={thumbnail} />
+                </View>
                 <Text style={styles.articleHeader}>{title}</Text>
                 <RenderHtml
                     contentWidth={width}
                     source={{html: content}}
                     renderersProps={renderersProps}
                     tagsStyles={htmlRendererStyles}
+                    defaultTextProps={defaultTextProps}
                 />
             </ScrollView>
         </View>
@@ -62,15 +72,22 @@ const Article = ({ route }) => {
 const styles = StyleSheet.create({
     articleMainImage: {
         height: height * 0.4,
-        width: width,
+        width: width*0.9,
+        borderRadius: 20
+    },
+    articleMainImageContainer: {
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     articleHeader: {
-        fontWeight: 'bold',
-        fontSize: 22,
-        paddingHorizontal: 16
+        fontFamily: 'Product Sans Bold',
+        fontSize: 28,
+        paddingVertical: 15,
+        paddingHorizontal: 25
     },
     articlePageContainer: {
         flex: 1,
+        paddingTop: 40,
         justifyContent: 'flex-start',
         alignItems: 'center'
     }

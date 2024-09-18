@@ -1,4 +1,3 @@
-import Layout from './features/layout/layout';
 import { Provider } from 'react-redux';
 import { store } from './features/store/redux/store';
 import { NavigationContainer } from '@react-navigation/native';
@@ -7,22 +6,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import AntDesign from '@expo/vector-icons/AntDesign';
 
+import { navigationRef } from './components/Utility';
 import Home from './features/home/home';
 import Meditation from './features/meditation/meditation';
 import Profile from './features/profile/profile';
 import Explore from './features/explore/explore';
 import Article from './features/home/homeComponents/article';
-import RecentArticles from './features/home/homeComponents/recentArticles';
-
-import { createNavigationContainerRef } from '@react-navigation/native';
-
-export const navigationRef = createNavigationContainerRef();
-
-export function navigate(name, params) {
-  if (navigationRef.isReady()) {
-    navigationRef.navigate(name, params);
-  }
-}
+import ArticlesList from './features/home/homeComponents/articlesList';
 
 const HomeStack = createNativeStackNavigator();
 const HomeStackScreen = () => {
@@ -30,11 +20,10 @@ const HomeStackScreen = () => {
     <HomeStack.Navigator>
       <HomeStack.Screen options={{ headerShown: false }} name="MainHome" component={Home} />
       <HomeStack.Screen options={{ headerShown: false }} name="Article" component={Article} />
-      <HomeStack.Screen options={{ headerShown: false }} name="RecentArticles" component={RecentArticles} />
+      <HomeStack.Screen options={{ headerShown: false }} name="ArticlesList" component={ArticlesList} />
     </HomeStack.Navigator>
   )
 }
-
 
 const Tab = createBottomTabNavigator();
 function App() {

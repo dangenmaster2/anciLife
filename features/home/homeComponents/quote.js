@@ -1,15 +1,54 @@
-import { StyleSheet, Text, View } from "react-native"
+import { Image, StyleSheet, Text, View } from "react-native"
+import { useDispatch, useSelector } from "react-redux"
+import { fetchQuotes, selectQuoteFetchStatus, selectQuoteResponse } from "../home.slice";
+import { useEffect } from "react";
 
 const Quote = () => {
+    const dispatch = useDispatch();
+    const generatedQuote = useSelector(selectQuoteResponse);
+    const quoteFetchStatus = useSelector(selectQuoteFetchStatus);
+    console.log('fetch status ', quoteFetchStatus);
+    
+    console.log('generated quote 2', generatedQuote?.quote);
+    
+    let fetchInterval = null;
+    const intervalFetchQuotes = () => {
+        fetchInterval = setInterval(() => {
+            dispatch(fetchQuotes());
+        }, 30000);
+    }
+
+    useEffect(() => {
+        intervalFetchQuotes();
+        return () => {
+            clearInterval(fetchInterval);
+            fetchInterval = null;
+        }
+    }, [])
     return(
         <View style={styles.quoteContainer}>
             <Text style={{
                 fontSize: 23, 
-                fontWeight: 'bold',
-                color: '#fff',
-                paddingVertical: 10
-                }}>If there is no mind, there is no world.</Text>
-        </View>
+                    fontFamily: 'Product Sans Bold Italic',
+                    color: '#fff',
+                    padding: 10,
+                    width: '70%'
+                }}>{
+                    quoteFetchStatus === 'loading' ? <Text>Quote Loading...</Text> : 
+                    <Text>
+                        {generatedQuote?.quote}
+                    </Text>
+                }</Text>
+                {
+                    quoteFetchStatus !== 'loading' &&
+                    <Image
+                    style={styles.blogThumbnail}
+                    source={{
+                        uri: generatedQuote.thumbnail,
+                    }}
+                />
+                }
+            </View>
     )
 }
 
@@ -20,8 +59,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#20a357',
         borderRadius: 20,
         alignItems: 'center',
-        justifyContent: 'center'
-    }
+        justifyContent: 'space-between',
+        flexDirection: 'row'
+    },
+    blogThumbnail: {
+        height: 100,
+        width: 100,
+        borderRadius: 10
+    },
 })
 
 export default Quote;

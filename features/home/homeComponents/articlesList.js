@@ -5,26 +5,21 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Feather from '@expo/vector-icons/Feather';
 import { useSelector } from "react-redux";
 import { selectAllBlogsWithId } from "../home.slice";
-import { navigate } from "../../../App";
+import { navigate } from "../../../components/Utility";
 
 const {height, width} = Dimensions.get('window');
 
-const Header = () => {
+const Header = ({ headerTitle }) => {
     return(
         <View style={styles.pageHeader}>
-            <View style={styles.headerCol1}>
-                <AntDesign name="arrowleft" size={24} color="green" />
-                <Text style={{fontWeight: 'bold', fontSize: 22}}>Recent Articles</Text>
-            </View>
-            <View>
-                <Ionicons name="search-outline" size={24} color="green" />
-            </View>
+            <AntDesign name="arrowleft" size={24} color="green" />
+            <Text style={{fontFamily: 'Product Sans Bold', fontSize: 22}}>{headerTitle}</Text>
+            <Ionicons name="search-outline" size={24} color="green" />
         </View>
     )
 }
 
 const ArticleGrid = ({item, onPress}) => {
-    console.log('item ttile ', item.title);
     
     return(
         <Pressable onPress={onPress}>
@@ -38,9 +33,17 @@ const ArticleGrid = ({item, onPress}) => {
                 <View style={styles.titleMoreIconContainer}>
                     <Text numberOfLines={3} style={{ 
                         fontSize: 18,
-                        fontWeight: 'bold'
+                        fontFamily: 'Product Sans Regular',
                         }}>{item.title}
                     </Text>
+                    <Text style={{
+                        fontFamily: 'Product Sans Italic',
+                        backgroundColor: 'green',
+                        color:'white',
+                        paddingLeft: 10,
+                        borderRadius: 10,
+                        width: '65%'
+                        }}>{item.category}</Text>
                     <View style={styles.moreIconContainer}>
                         <MaterialCommunityIcons style={{marginRight: 15}} name="bookmark-plus" size={24} color="green" />
                         <Feather name="more-vertical" size={24} color="green" />
@@ -52,9 +55,9 @@ const ArticleGrid = ({item, onPress}) => {
     )
 }
 
-const RecentArticles = () => {
+const ArticlesList = ({route}) => {
     const blogsToRender = useSelector(selectAllBlogsWithId);
-
+    const headerTitle = route.params.headerTitle;
     const articleGridPressHandler = (item) => {
         navigate('Article', {
             articleId: item.id
@@ -63,10 +66,10 @@ const RecentArticles = () => {
 
     return(
         <View style={styles.allArticles}>
-            <Header />
+            <Header headerTitle={headerTitle}/>
             <FlatList
                 data={blogsToRender}
-                style={styles.recentArticlesContainer}
+                // style={styles.articlesListContainer}
                 renderItem={({ item }) => <ArticleGrid 
                     item={item} 
                     onPress={() => {articleGridPressHandler(item)}}
@@ -81,10 +84,7 @@ const RecentArticles = () => {
 
 const styles = StyleSheet.create({
     articleGridContainer: {
-        height: (width/2.4),
-        width: (width/2.4),
-        borderRadius: 10,
-        marginRight: 6.5,
+        width: '54%',
         marginTop: 20,
         flexDirection: 'row'
     },
@@ -98,12 +98,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        paddingBottom: 10
     },
     headerCol1: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        flex: 0.57
+        // justifyContent: 'center',
     },
     titleMoreIconContainer: {
         justifyContent: 'space-between',
@@ -115,11 +115,9 @@ const styles = StyleSheet.create({
     },
     allArticles: {
         flex: 1,
-        paddingTop: 70,
-        paddingHorizontal: 30
-        // alignItems: 'center',
-        // justifyContent: 'center'
+        paddingTop: 53,
+        paddingHorizontal: 15
     },
 })
 
-export default RecentArticles;
+export default ArticlesList;

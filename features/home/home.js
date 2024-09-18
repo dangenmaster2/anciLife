@@ -1,14 +1,16 @@
 import { StyleSheet, Text, View } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withRepeat, withTiming, interpolateColor } from 'react-native-reanimated';
 import useLogout from "../hooks/useLogout";
+import { useFonts } from 'expo-font';
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllBlogs, fetchUserData, selectAllBlogFetchStatus, selectAllBlogsResponse, selectAllBlogsWithId, selectFetchUserDataStatus } from "./home.slice";
+import { fetchAllBlogs, fetchAllCategories, fetchUserData, selectAllBlogFetchStatus, selectAllBlogsResponse, selectAllBlogsWithId, selectAllCategories, selectFetchUserDataStatus } from "./home.slice";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';
 import ArticleGrid from "./homeComponents/articleGrid";
 import AnciLifeLogo from "../../assets/logo/ancilife_logo";
 import Quote from "./homeComponents/quote";
+import ExploreTopics from "./homeComponents/exploreTopics";
 
 const Colors = {
     start: {
@@ -38,15 +40,56 @@ const HomeHeader = () => {
     )
 }
 
-const Home = ({navigation}) => {
+const RecentArticles = () => {
+    const blogsToRender = useSelector(selectAllBlogsWithId);
+    
+    return (
+        <ArticleGrid 
+            blogs={blogsToRender} 
+            headerTitle='Recent Articles'
+            mainRoute='ArticlesList'
+        />
+    )
+}
+
+const RecommendedArticles = () => {
+    const blogsToRender = useSelector(selectAllBlogsWithId);
+
+    return (
+        <ArticleGrid 
+            blogs={blogsToRender} 
+            headerTitle='Recommended For You'
+            mainRoute='ArticlesList'
+        />
+    )
+}
+
+const ExploreByTopics = () => {
+    const allTopicsArray = useSelector(selectAllCategories);
+    
+    return (
+        <View>
+            {/* <ExploreTopics /> */}
+        </View>
+    )
+}
+
+const Home = () => {
     const { userLogoutFnc } = useLogout();
     const dispatch = useDispatch();
     const allBlogFetchStatus = useSelector(selectAllBlogFetchStatus);
-    const blogsToRender = useSelector(selectAllBlogsWithId);
-
     const scale = useSharedValue(1);
     const fontSizeText = useSharedValue(20);
     const colorProgress = useSharedValue(0);
+
+    const [loaded, error] = useFonts({
+        'Montserrat': require('../../assets/fonts/Montserrat-Italic-VariableFont_wght.ttf'),
+        'Cabin': require('../../assets/fonts/Cabin-VariableFont_wdth,wght.ttf'),
+        'Product Sans Italic': require('../../assets/fonts/Product Sans Italic.ttf'),
+        'Product Sans Regular': require('../../assets/fonts/Product Sans Regular.ttf'),
+        'Product Sans Bold': require('../../assets/fonts/Product Sans Bold.ttf'),
+        'Product Sans Bold Italic': require('../../assets/fonts/Product Sans Bold Italic.ttf'),
+      });
 
     const animatedStyle = useAnimatedStyle(() => {
         return {
@@ -80,12 +123,13 @@ const Home = ({navigation}) => {
     useEffect(()=> {
         dispatch(fetchUserData());
         dispatch(fetchAllBlogs());
+        dispatch(fetchAllCategories());
     },[])
 
     return(
         <View style={styles.homeScreenContainer}>
             {
-                allBlogFetchStatus !== 'succeeded' ? 
+                allBlogFetchStatus !== 'succeeded' && (!loaded && !error) ? 
                 <View>
                     <View style={{height: 70, justifyContent: 'center', alignItems: 'center'}}>
                         <AnciLifeLogo 
@@ -104,7 +148,9 @@ const Home = ({navigation}) => {
                 <View>
                     <HomeHeader />
                     <Quote />
-                    <ArticleGrid blogs={blogsToRender} navigation={navigation}/>
+                    <RecentArticles />
+                    <RecommendedArticles />
+                    <ExploreByTopics />
                 </View>
             }
         </View>
@@ -113,8 +159,7 @@ const Home = ({navigation}) => {
 const styles = StyleSheet.create({
     loadingText: {
         textAlign: 'center',
-        fontWeight: 'bold',
-        fontFamily: 'PlaypenSans-Bold'
+        fontWeight: 'bold'
     },
     loadingLogo: {
         scale: 2
@@ -138,8 +183,8 @@ const styles = StyleSheet.create({
         height: '100%',
         justifyContent: 'center',
         alignItems: 'center',
-        paddingVertical: 70,
-        paddingHorizontal: 25
+        paddingVertical: 55,
+        paddingHorizontal: 15
     },
 })
 

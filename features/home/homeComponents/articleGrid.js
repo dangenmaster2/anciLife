@@ -1,17 +1,9 @@
 import { Dimensions, FlatList, Image, Pressable, StyleSheet, Text, View } from "react-native"
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { useFonts } from 'expo-font';
-import { useEffect } from "react";
+import { navigate } from "../../../components/Utility";
 const {height, width} = Dimensions.get('window');
 
-const ArticleGrid = ({item, onPress, navigation}) => {
-    // const [loaded, error] = useFonts({
-    //     'Inter-Black': require('../../../assets/fonts/Rubik/Rubik-Italic-VariableFont_wght.ttf'),
-    //   });
-    
-    //   if (!loaded && !error) {
-    //     return null;
-    //   }
+const ArticleGrid = ({item, onPress}) => {
     return(
         <Pressable onPress={onPress}>
             <View style={styles.articleGridContainer}>
@@ -22,19 +14,20 @@ const ArticleGrid = ({item, onPress, navigation}) => {
                     }}
                 />
                 <Text numberOfLines={2} style={{ 
-                    // fontFamily: 'Inter-Black', 
+                    fontFamily: 'Product Sans Regular',
                     fontSize: 18,
-                    fontWeight: 'bold'
                      }}>{item.title}</Text>
             </View>
         </Pressable>
     )
 }
 
-const AllArticlesHeader = ({ navigation }) => {
+const AllArticlesHeader = ({ headerTitle, mainRoute }) => {
 
 const allArticlesPressHandler = () => {
-    navigation.navigate('RecentArticles')
+    navigate(mainRoute, {
+        headerTitle
+    })
 }
 
 return(
@@ -42,8 +35,8 @@ return(
         <Text style={{
             fontSize: 20, 
             paddingLeft: 5,
-            fontWeight: 'bold'
-            }}>Recent Articles</Text>
+            fontFamily: 'Product Sans Bold'
+            }}>{headerTitle}</Text>
             <Pressable onPress={allArticlesPressHandler}>
                 <AntDesign name="arrowright" size={24} color="green" />
             </Pressable>
@@ -51,21 +44,16 @@ return(
 )
 }
 
-const ArticlesGrid = ({ blogs , navigation }) => {
+const ArticlesGrid = ({ blogs, headerTitle, mainRoute }) => {
     const articleGridPressHandler = (item) => {
-        navigation.navigate('Article', {
+        navigate('Article', {
             articleId: item.id
         });
     }
 
-    useEffect(() => {
-        return () => console.log('article grid unmounting');
-        
-    }, [])
-
     return(
         <View style={styles.articlesGridContainer}>
-            <AllArticlesHeader navigation={navigation}/>
+            <AllArticlesHeader headerTitle={headerTitle} mainRoute={mainRoute}/>
             <FlatList 
                 data={blogs}
                 style={styles.flatListArticleContainer}
@@ -93,7 +81,7 @@ const styles = StyleSheet.create({
     },
     articlesGridContainer: {
         flex: 1,
-        paddingTop: 20
+        paddingTop: 10
     },
     articleGridContainer: {
         height: (width/2.4),

@@ -4,6 +4,7 @@ import loginSlice from "../../login/login.slice";
 import onBoardingSlice from "../../onboarding/onBoarding.slice";
 import userInfoSlice from "../../userInfo/userInfo.slice";
 import homeSlice from "../../home/home.slice";
+import meditationSlice from "../../meditation/meditation.slice";
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     login: loginSlice ,
     onboarding: onBoardingSlice,
     userinfo: userInfoSlice,
-    home: homeSlice
+    home: homeSlice,
+    meditation: meditationSlice
   }
 });

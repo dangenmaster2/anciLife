@@ -9,6 +9,7 @@ export const selectAllBlogFetchStatus = state => state.home.allBlogFetchStatus;
 export const selectQuoteFetchStatus = state => state.home.quoteFetchStatus;
 export const selectAllCategoriesResponse = state => state.home.allCategoriesResponse;
 export const selectQuoteResponse = state => state.home.currentQuoteResponse;
+export const selectDeviceDimensions = state => state.home.deviceDimensions;
 
 const convertTimestamps = (obj) => {
     if (obj instanceof Object && obj !== null) {
@@ -108,7 +109,8 @@ const homeSlice = createSlice({
         userDataResponse: {},
         allBlogsResponse: null,
         allCategoriesResponse: null,
-        currentQuoteResponse: null
+        currentQuoteResponse: null,
+        deviceDimensions: {}
     },
     reducers: {
         setUserData: (state, action) => {
@@ -120,6 +122,9 @@ const homeSlice = createSlice({
         setAllCategoriesResponse: (state, action) => {
             state.allCategoriesResponse = action.payload;
         },
+        setDeviceDimensions: (state, action) => {
+            state.deviceDimensions = action.payload;
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -198,5 +203,5 @@ export const selectAllCategories = createSelector([selectAllCategoriesResponse],
 })
 
 
-export const { setUserData } = homeSlice.actions;
+export const { setUserData, setDeviceDimensions } = homeSlice.actions;
 export default homeSlice.reducer;

@@ -1,16 +1,18 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Dimensions } from "react-native";
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withRepeat, withTiming, interpolateColor } from 'react-native-reanimated';
 import useLogout from "../hooks/useLogout";
 import { useFonts } from 'expo-font';
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllBlogs, fetchAllCategories, fetchUserData, selectAllBlogFetchStatus, selectAllBlogsResponse, selectAllBlogsWithId, selectAllCategories, selectFetchUserDataStatus } from "./home.slice";
+import { fetchAllBlogs, fetchAllCategories, fetchUserData, selectAllBlogFetchStatus, selectAllBlogsResponse, selectAllBlogsWithId, selectAllCategories, selectFetchUserDataStatus, setDeviceDimensions } from "./home.slice";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';
 import ArticleGrid from "./homeComponents/articleGrid";
 import AnciLifeLogo from "../../assets/logo/ancilife_logo";
 import Quote from "./homeComponents/quote";
 import ExploreTopics from "./homeComponents/exploreTopics";
+
+const {height, width} = Dimensions.get('window');
 
 const Colors = {
     start: {
@@ -83,13 +85,15 @@ const Home = () => {
     const colorProgress = useSharedValue(0);
 
     const [loaded, error] = useFonts({
-        'Montserrat': require('../../assets/fonts/Montserrat-Italic-VariableFont_wght.ttf'),
-        'Cabin': require('../../assets/fonts/Cabin-VariableFont_wdth,wght.ttf'),
         'Product Sans Italic': require('../../assets/fonts/Product Sans Italic.ttf'),
         'Product Sans Regular': require('../../assets/fonts/Product Sans Regular.ttf'),
         'Product Sans Bold': require('../../assets/fonts/Product Sans Bold.ttf'),
         'Product Sans Bold Italic': require('../../assets/fonts/Product Sans Bold Italic.ttf'),
       });
+
+      useEffect(() => {
+        dispatch(setDeviceDimensions({height, width}));
+      }, [height, width])
 
     const animatedStyle = useAnimatedStyle(() => {
         return {

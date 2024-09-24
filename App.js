@@ -32,7 +32,7 @@ function App() {
       <NavigationContainer ref={navigationRef}>
       <Tab.Navigator
       screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
+        tabBarIcon: ({ focused }) => {
           let iconName;
           let iconColor;
           if (route.name === 'Home') {
@@ -61,7 +61,7 @@ function App() {
         tabBarInactiveTintColor: 'black',
         })}>
         <Tab.Screen name="Home" component={HomeStackScreen} options={{ headerShown: false }}/>
-        <Tab.Screen name="Meditation" component={Meditation} />
+        <Tab.Screen name="Meditation" component={Meditation} options={{ headerShown: false }}/>
         <Tab.Screen name="Explore" component={Explore} />
         <Tab.Screen name="Profile" component={Profile} />
       </Tab.Navigator>

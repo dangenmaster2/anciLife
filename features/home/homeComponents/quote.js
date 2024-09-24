@@ -7,24 +7,21 @@ const Quote = () => {
     const dispatch = useDispatch();
     const generatedQuote = useSelector(selectQuoteResponse);
     const quoteFetchStatus = useSelector(selectQuoteFetchStatus);
-    console.log('fetch status ', quoteFetchStatus);
     
-    console.log('generated quote 2', generatedQuote?.quote);
-    
-    let fetchInterval = null;
-    const intervalFetchQuotes = () => {
-        fetchInterval = setInterval(() => {
-            dispatch(fetchQuotes());
-        }, 30000);
-    }
+    // let fetchInterval = null;
+    // const intervalFetchQuotes = () => {
+    //     fetchInterval = setInterval(() => {
+    //         dispatch(fetchQuotes());
+    //     }, 30000);
+    // }
 
-    useEffect(() => {
-        intervalFetchQuotes();
-        return () => {
-            clearInterval(fetchInterval);
-            fetchInterval = null;
-        }
-    }, [])
+    // useEffect(() => {
+    //     intervalFetchQuotes();
+    //     return () => {
+    //         clearInterval(fetchInterval);
+    //         fetchInterval = null;
+    //     }
+    // }, [])
     return(
         <View style={styles.quoteContainer}>
             <Text style={{
@@ -34,9 +31,10 @@ const Quote = () => {
                     padding: 10,
                     width: '70%'
                 }}>{
-                    quoteFetchStatus === 'loading' ? <Text>Quote Loading...</Text> : 
+                    // quoteFetchStatus === 'loading' ? <Text>Quote Loading...</Text> : 
                     <Text>
-                        {generatedQuote?.quote}
+                        {/* {generatedQuote?.quote} */}
+                        Why this kolaveri di?
                     </Text>
                 }</Text>
                 {
@@ -60,7 +58,8 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         alignItems: 'center',
         justifyContent: 'space-between',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        minHeight: 100
     },
     blogThumbnail: {
         height: 100,

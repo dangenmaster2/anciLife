@@ -13,6 +13,7 @@ import Profile from './features/profile/profile';
 import Explore from './features/explore/explore';
 import Article from './features/home/homeComponents/article';
 import ArticlesList from './features/home/homeComponents/articlesList';
+import MeditationClass from './features/meditation/meditationClasses';
 
 const HomeStack = createNativeStackNavigator();
 const HomeStackScreen = () => {
@@ -21,6 +22,7 @@ const HomeStackScreen = () => {
       <HomeStack.Screen options={{ headerShown: false }} name="MainHome" component={Home} />
       <HomeStack.Screen options={{ headerShown: false }} name="Article" component={Article} />
       <HomeStack.Screen options={{ headerShown: false }} name="ArticlesList" component={ArticlesList} />
+      <HomeStack.Screen options={{ headerShown: false }} name="MeditationClass" component={MeditationClass} />
     </HomeStack.Navigator>
   )
 }

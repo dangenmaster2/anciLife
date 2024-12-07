@@ -1,6 +1,15 @@
 import { Image, StyleSheet, Text, View, Dimensions, ScrollView } from "react-native";
 import { useEffect, useState } from "react";
-import { fetchAllMeditationsData, fetchAllMeditationsType, selectAllMeditationsDataFetchStatus, selectAllMeditationsFetchStatus, selectAllMeditationsType, selectMeditationTypeData } from "./meditation.slice";
+import { 
+    fetchAllMeditationsClasses, 
+    fetchAllMeditationsData, 
+    fetchAllMeditationsType,
+    selectAllMeditationsDataFetchStatus, 
+    selectAllMeditationsFetchStatus, 
+    selectAllMeditationsType,
+    selectMeditationTypeData } 
+    from "./meditation.slice";
+import { navigate } from "../../components/Utility";
 import { useDispatch, useSelector } from "react-redux";
 import { selectDeviceDimensions } from "../home/home.slice";
 import { TouchableOpacity } from "react-native";
@@ -34,21 +43,46 @@ const MeditationDescription = ({ description }) => {
     )
 }
 
-const MeditationCard = ({ medtationTitleData }) => {
+const MeditationCard = ({ medtationTitleData, index }) => {
     const deviceDimensions = useSelector(selectDeviceDimensions);
     const {height, width} = deviceDimensions;
     const allMeditationTypeData = useSelector(selectMeditationTypeData);
     const currentMeditationTypeData = allMeditationTypeData[medtationTitleData];
-    const { meditation, backgroundColor, meditationId } = currentMeditationTypeData;
+    const { meditation, backgroundColor, meditationId, thumbnail } = currentMeditationTypeData;
     const SVGcomponent = SVGRenderer(meditationId);
+
+    const cardHeight = height * 0.195;
+    const cardWidth = width * 0.95;
+
+    const commonCardStyle = {
+        height: cardHeight, 
+        width: cardWidth, 
+        borderRadius: 30 
+    }
+
+    const handleMeditationCardPress = () => {
+        console.log('meditation pressed ', medtationTitleData, index)
+        navigate('MeditationClass', {
+            meditationId: medtationTitleData
+        });
+    }
 
     return (
           <TouchableOpacity style={[
             styles.meditationCard, 
-            {backgroundColor: `${backgroundColor}`,  
-            height: height * 0.195, 
-            width: width * 0.95 
-            }]}>
+            {backgroundColor: `${backgroundColor}80`,  
+            height: cardHeight, 
+            width: cardWidth
+            }]}
+            onPress={handleMeditationCardPress}>
+            <View style={styles.svgBackground}>
+                <Image
+                    style={commonCardStyle}
+                    source= {{
+                        uri: thumbnail
+                    }}
+                />
+            </View>
             <View style={styles.meditationIconTextContainer}>
               <View style={styles.meditationText}>
                 <Text style={{ fontSize: 35, fontFamily: 'Product Sans Bold', color: 'white' }}>10 lessons</Text>
@@ -98,10 +132,12 @@ const Meditation = () => {
     const allMeditationsFetchStatus = useSelector(selectAllMeditationsFetchStatus);
     const allMeditationsDataFetchStatus = useSelector(selectAllMeditationsDataFetchStatus)
     const allMeditationTypes = useSelector(selectAllMeditationsType);
-    
+
+    // console.log('allMeditationClasses ',allMeditationClasses)
     useEffect(() => {
         dispatch(fetchAllMeditationsType());
         dispatch(fetchAllMeditationsData());
+        dispatch(fetchAllMeditationsClasses());
     }, [])
 
     return(
@@ -116,7 +152,9 @@ const Meditation = () => {
                     {
                         allMeditationTypes.map((type, index) => (
                             <View key={index}>
-                                <MeditationCard medtationTitleData={type}/>
+                                <MeditationCard 
+                                index={index}
+                                medtationTitleData={type}/>
                             </View>
                         ))
                     }
@@ -167,6 +205,16 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center'
     },
+    svgBackground: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: -1, 
+    },
+    imageContainer: {
+    }
 })
 
 export default Meditation;

@@ -6,13 +6,13 @@ import { getStorage } from 'firebase/storage';
 import { getDatabase } from 'firebase/database';
 
 const firebaseConfig = {
-  apiKey: `${API_KEY}`,
+  apiKey: "AIzaSyAyGmyNIwOxPWKmUNnqv8BqmacrBvXK_So",
   authDomain: "ancilife-151f6.firebaseapp.com",
   databaseURL: "https://ancilife-151f6-default-rtdb.firebaseio.com",
   projectId: "ancilife-151f6",
   storageBucket: "ancilife-151f6.appspot.com",
   messagingSenderId: "745131209241",
-  appId: `${APP_ID}`
+  appId: "1:745131209241:web:af37fb8f9f9759b5243088"
 };
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);

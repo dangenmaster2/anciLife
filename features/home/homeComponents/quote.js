@@ -34,7 +34,7 @@ const Quote = () => {
                     // quoteFetchStatus === 'loading' ? <Text>Quote Loading...</Text> : 
                     <Text>
                         {/* {generatedQuote?.quote} */}
-                        Why this kolaveri di?
+                        Jai Shree Krishna
                     </Text>
                 }</Text>
                 {

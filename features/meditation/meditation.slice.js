@@ -6,6 +6,7 @@ export const selectAllMeditationsFetchStatus = state => state.meditation.allMedi
 export const selectAllMeditationsType = state => state.meditation.allMeditationTypes;
 export const selectAllMeditationsDataResponse = state => state.meditation.meditationsAllDataResponse;
 export const selectAllMeditationsDataFetchStatus = state => state.meditation.allMeditationsDataFetchStatus;
+export const selectAllMeditationsClassesResponse = state => state.meditation.meditationsAllClassesResponse;
 
 const convertTimestamps = (obj) => {
     if (obj instanceof Object && obj !== null) {
@@ -50,7 +51,23 @@ export const fetchAllMeditationsData = createAsyncThunk('user/fetchAllMeditation
             meditationsDataArray.push({ ...doc.data(), id: doc.id });
         });
         meditationsDataArray = convertTimestamps(meditationsDataArray);
-        
+        return meditationsDataArray;
+    } catch (error) {
+        console.error('Fetching all meditations failed', error);
+    }
+})
+
+export const fetchAllMeditationsClasses = createAsyncThunk('user/fetchAllMeditationsClasses', async () => {
+    try {
+        const q = query(
+            collection(fireDb, "meditationLessons"),
+        );
+        const querySnapshot = await getDocs(q);
+        let meditationsDataArray = [];
+        querySnapshot.forEach((doc) => {
+            meditationsDataArray.push({ ...doc.data(), id: doc.id });
+        });
+        meditationsDataArray = convertTimestamps(meditationsDataArray);
         return meditationsDataArray;
     } catch (error) {
         console.error('Fetching all meditations failed', error);
@@ -60,13 +77,18 @@ export const fetchAllMeditationsData = createAsyncThunk('user/fetchAllMeditation
 const meditationSlice = createSlice({
     name: 'meditation',
     initialState: {
+        activeMeditationType: '',
         allMeditationFetchStatus: 'loading',
+        allMeditationsClassesFetchStatus: 'loading',
+        meditationsAllClassesResponse: null,
         allMeditationsDataFetchStatus: 'loading',
         allMeditationTypes: null,
         meditationsAllDataResponse: null
     },
     reducers: {
-
+        setActiveMeditationType: (state, action) => {
+            state.activeMeditationType = action.payload;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -93,6 +115,18 @@ const meditationSlice = createSlice({
                 state.allMeditationsDataFetchStatus = 'failed';
                 state.error = action.error.message;
             });
+        builder
+            .addCase(fetchAllMeditationsClasses.pending, (state) => {
+                state.allMeditationsClassesFetchStatus = 'loading';
+            })
+            .addCase(fetchAllMeditationsClasses.fulfilled, (state, action) => {
+                state.allMeditationsClassesFetchStatus = 'succeeded';
+                state.meditationsAllClassesResponse = action.payload;
+            })
+            .addCase(fetchAllMeditationsClasses.rejected, (state, action) => {
+                state.allMeditationsClassesFetchStatus = 'failed';
+                state.error = action.error.message;
+            });
     }
 })
 
@@ -104,8 +138,25 @@ export const selectMeditationTypeData = createSelector([selectAllMeditationsData
             acc[data.meditationId] = {meditation, id, thumbnail, backgroundColor, meditationId};
             return acc;
         },{})
-        
+        // console.log('all meditation data ', allMeditationsData);
         return allMeditationsData;
     })
 
+export const selectMeditationClasses = createSelector([selectAllMeditationsClassesResponse],
+    (allMeditationClassesResponse) => {
+        if (!allMeditationClassesResponse) return null;
+        const meditationClassesIdWise = allMeditationClassesResponse.reduce((acc, data) => {
+            const {id, lessonObj, meditationId} = data;
+            acc[meditationId] = {id, lessonObj};
+            return acc;
+        }, {})
+        return meditationClassesIdWise;
+    }
+)
+
+export const selectMeditationClass = createSelector([selectMeditationClasses],
+    (meditationClasses) => {
+        console.log('all classes ', meditationClasses);
+    })
+    export const { setActiveMeditationType } = meditationSlice.actions;
 export default meditationSlice.reducer;
